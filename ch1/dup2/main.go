@@ -15,8 +15,9 @@ import (
 )
 
 func main() {
-	counts := make(map[string]int)
+	counts := make(map[string]map[string]int)
 	files := os.Args[1:]
+
 	if len(files) == 0 {
 		countLines(os.Stdin, counts)
 	} else {
@@ -30,17 +31,30 @@ func main() {
 			f.Close()
 		}
 	}
-	for line, n := range counts {
-		if n > 1 {
-			fmt.Printf("%d\t%s\n", n, line)
+
+	for text, file := range counts {
+		found := ""
+		finalCount := 0
+
+		for name, count := range file {
+			found += " " + name
+			finalCount += count
+		}
+
+		if finalCount > 1 {
+			fmt.Printf("%s\t%d\t%s\n", text, finalCount, found)
 		}
 	}
 }
 
-func countLines(f *os.File, counts map[string]int) {
+func countLines(f *os.File, counts map[string]map[string]int) {
 	input := bufio.NewScanner(f)
 	for input.Scan() {
-		counts[input.Text()]++
+		if counts[input.Text()] == nil {
+			counts[input.Text()] = make(map[string]int)
+		}
+
+		counts[input.Text()][f.Name()]++
 	}
 	// NOTE: ignoring potential errors from input.Err()
 }

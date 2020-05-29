@@ -10,15 +10,23 @@ package main
 import (
 	"fmt"
 	"os"
+	"strconv"
+	"time"
 )
 
-func main() {
+func echo() {
 	var s, sep string
 	for i := 1; i < len(os.Args); i++ {
-		s += sep + os.Args[i]
-		sep = " "
+		s += sep + strconv.Itoa(i) + os.Args[i]
+		sep = "\n"
 	}
 	fmt.Println(s)
+}
+
+func main() {
+	start := time.Now()
+	echo()
+	fmt.Printf("%.10fs elapsed\n", time.Since(start).Seconds())
 }
 
 //!-
